@@ -109,9 +109,9 @@ def parse_args(args=None):
     parser.add_argument('--test_log_steps', default=1000,
                         type=int, help='valid/test log every xx steps')
     parser.add_argument('--neighbor_ent_type_samples',default=32,
-                        type=int,  help='number of sampled entity type neighbors')#新增加的超参数
+                        type=int,  help='number of sampled entity type neighbors')
     parser.add_argument('--neighbor_rel_type_samples', default=64,
-                        type=int, help='number of sampled relation type neighbors')#新增加的超参数
+                        type=int, help='number of sampled relation type neighbors')
     return parser.parse_args(args)
 
 
@@ -277,16 +277,11 @@ def main(args):
         writer = SummaryWriter(args.save_path)
     set_logger(args)
 
-    # with open('%s/stats.txt' % args.data_path) as f:
-    #     entrel = f.readlines()
-    #     nentity = int(entrel[0].split(' ')[-1])
-    #     nrelation = int(entrel[1].split(' ')[-1])
-    #新增了关系数量，读取多了关系数量
     with open('%s/stats.txt'%args.data_path) as f:
         entrel = f.readlines()
         nentity = int(entrel[0].split(' ')[-1])
         nrelation = int(entrel[1].split(' ')[-1])
-        ntype = int(entrel[2].split(' ')[-1])#类型的数量
+        ntype = int(entrel[2].split(' ')[-1])
 
     args.nentity = nentity
     args.nrelation = nrelation
@@ -339,8 +334,6 @@ def main(args):
         else:
             train_other_iterator = None
 
-#train_path_queries包含所有训练数据
-#train_other_queries包含不进行训练的数据
 
     logging.info("Validation info:")
     if args.do_valid:
@@ -375,9 +368,7 @@ def main(args):
             num_workers=args.cpu_num,
             collate_fn=TestDataset.collate_fn
         )
-    #构建了两个字典，键是实体，值是跟实体相关的属性
     entity2type, relation2type = build_kg(args.data_path, args.neighbor_ent_type_samples, args.neighbor_rel_type_samples)
-    #模型构建
     model = KGReasoning(
         nentity=nentity,
         nrelation=nrelation,
@@ -392,7 +383,7 @@ def main(args):
         test_batch_size=args.test_batch_size,
         query_name_dict=query_name_dict,
         center_reg=args.center_reg,
-        neighbor_ent_type_samples=args.neighbor_ent_type_samples,######
+        neighbor_ent_type_samples=args.neighbor_ent_type_samples,
 
     )
 
@@ -522,7 +513,6 @@ def main(args):
 
     logging.info("Training finished!!\n")
 
-#新增加的函数，为了构建知识图谱
 def build_kg(data_path, neighbor_ent_type_samples, neighbor_rel_type_samples):
     entity_type_mapping = np.load(data_path + '/entity_type.npy', allow_pickle=True)
     entity2types = []
