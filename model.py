@@ -322,7 +322,7 @@ class KGReasoning(nn.Module):
 
                 axis_embedding = axis_entity_embedding
                 arg_embedding = arg_entity_embedding
-                height_embedding = height_entity_embedding#比ConE模型多出来的高度参数
+                height_embedding = height_entity_embedding
             else:
                 axis_embedding, arg_embedding, height_embedding, idx = self.embed_query_cylinder(
                     queries, query_structure[0], idx)
@@ -336,11 +336,11 @@ class KGReasoning(nn.Module):
                             axis_embedding, arg_embedding, height_embedding)
                 # projection映射操作
                 else:
-                    axis_r_embedding = torch.index_select(#中心轴
+                    axis_r_embedding = torch.index_select(
                         self.axis_embedding, dim=0, index=queries[:, idx])
-                    arg_r_embedding = torch.index_select(#孔径
+                    arg_r_embedding = torch.index_select(
                         self.arg_embedding, dim=0, index=queries[:, idx])
-                    height_r_embedding = torch.index_select(#高度
+                    height_r_embedding = torch.index_select(
                         self.height_embedding, dim=0, index=queries[:, idx])
 
 
@@ -354,8 +354,6 @@ class KGReasoning(nn.Module):
                     # )
                     
                    
-
-                    #进行tanh操作，将值规范到一个范围
                     axis_r_embedding = convert_to_axis(axis_r_embedding)
                     arg_r_embedding = convert_to_axis(arg_r_embedding)
                     height_r_embedding = convert_to_height(height_r_embedding)
